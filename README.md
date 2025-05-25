@@ -3,9 +3,8 @@
 Aplikacja stworzona w Pythonie z wykorzystaniem [TheDogAPI](https://www.thedogapi.com/), FastAPI oraz Tkinter. Umożliwia przeglądanie losowych zdjęć losowych psów. Można wybrać również rase psa, dodawać i usuwać zdjęcia z ulubionych oraz zapisywać dane zdjęcie na nasze urządzenie.
 
 ## Jak uruchomić?
-1. Uruchom serwer w terminalu:
-    #### uvicorn server:app --reload 
-2. Uruchom aplikację:
+Po ostatniej aktualizacji wystarczy, że uruchomisz aplikacje w terminalu. Serwer uruchamia się w tym pliku jednocześnie z aplikacją.
+1. Uruchom aplikację:
     #### python app.py
 
 ## Wersja EXE
