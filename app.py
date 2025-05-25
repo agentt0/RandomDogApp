@@ -5,6 +5,27 @@ import requests
 from io import BytesIO
 import json
 import os
+import subprocess
+import time
+import socket
+
+# uruchamiamy serwer bezposrednio w aplikacji aby nie robic tego recznie przez terminal
+# sprawdza czy serwer juz dziala
+def is_server_running():
+    try:
+        with socket.create_connection(("127.0.0.1", 8000), timeout=1):
+            return True
+    except Exception:
+        return False
+
+# jesli serwer nie dziala, jest uruchamiany przez uvicorn
+if not is_server_running():
+    subprocess.Popen(
+        ["uvicorn", "server:app", "--host", "127.0.0.1", "--port", "8000"],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    time.sleep(2)  # czas na uruchomienie serwera
 
 # adres lokalnego API
 API_URL = "http://127.0.0.1:8000"
