@@ -1,0 +1,13 @@
+# Ignoruj plik wykonywalny
+*.exe
+
+# PyInstaller folder
+dist/
+build/
+__pycache__/
+
+# Systemowe
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
