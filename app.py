@@ -30,37 +30,37 @@ if not is_server_running():
 # adres lokalnego API
 API_URL = "http://127.0.0.1:8000"
 
-# zmienne globalne do przechowywania bieżącego obrazu i listy ulubionych
+# zmienne globalne do przechowywania biezacego obrazu i listy ulubionych
 CURRENT_IMAGE = None
 CURRENT_IMAGE_URL = None
 FAVORITES = []
 FAV_FILE = "favorites.json"
 
-# funkcja wczytująca ulubione z pliku json
+# funkcja wczytujaca ulubione z pliku json
 def load_favorites():
     if os.path.exists(FAV_FILE):
         with open(FAV_FILE, "r") as f:
             return json.load(f)
     return []
 
-# funkcja zapisująca ulubione do pliku json
+# funkcja zapisujaca ulubione do pliku json
 def save_favorites():
     with open(FAV_FILE, "w") as f:
         json.dump(FAVORITES, f, indent=2)
 
-# główna klasa aplikacji
+# glowna klasa aplikacji
 class DogApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("RandomDog")
+        self.root.title("RandomDog") # nazwa aplikacji
         self.root.iconbitmap("dog_icon.ico")  # ustawienie ikony aplikacji
-        self.root.geometry("600x700")
+        self.root.geometry("600x700") # wielkosc okna aplikacji
         self.root.configure(bg="#fefefe")  # kolor tła
 
         style = ttk.Style()
-        style.theme_use('clam')  # styl przycisków i widżetów
+        style.theme_use('clam')  # styl przyciskow
 
-        # tworzenie zakładek
+        # stworzenie dwoch zakladek: "Losuj psa" i "Ulubione", aby wszystko nie bylo w jednym oknie
         self.notebook = ttk.Notebook(root)
         self.notebook.pack(fill="both", expand=True)
 
@@ -69,7 +69,6 @@ class DogApp:
         self.notebook.add(self.main_frame, text="Losuj psa")
         self.notebook.add(self.fav_frame, text="Ulubione")
 
-        # budowanie obu zakładek
         self.main_tab()
         self.fav_tab()
 
@@ -78,17 +77,17 @@ class DogApp:
         FAVORITES = load_favorites()
         self.update_fav_tab()
 
-    # budowanie zakładki głównej
+    # budowanie glownej zakladki - "Losuj psa"
     def main_tab(self):
         self.label = tk.Label(self.main_frame, text="Wybierz rasę lub wylosuj psa", font=("Verdana", 14, "bold"), bg="#fefefe")
         self.label.pack(pady=10)
 
         self.breed_combobox = ttk.Combobox(self.main_frame, state="readonly", width=40)
         self.breed_combobox.pack(pady=5)
-        self.load_breeds()  # załaduj rasy do listy
+        self.load_breeds()  # ladowanie listy ras
 
         self.button = ttk.Button(self.main_frame, text="Pokaż psa", command=self.fetch_dog)
-        self.button.pack(pady=10)
+        self.button.pack(pady=10) # przycisk "Pokaz psa"
 
         self.image_label = tk.Label(self.main_frame, bg="#fefefe")
         self.image_label.pack(pady=10)
@@ -97,15 +96,15 @@ class DogApp:
         self.breed_label.pack(pady=5)
 
         self.like_button = ttk.Button(self.main_frame, text="Dodaj do ulubionych", command=self.add_to_favorites)
-        self.like_button.pack(pady=5)
+        self.like_button.pack(pady=5) # przycisk "Dodaj do ulubionych"
 
         self.save_button = ttk.Button(self.main_frame, text="Zapisz zdjęcie", command=self.save_image)
-        self.save_button.pack(pady=5)
+        self.save_button.pack(pady=5) # przycisk "Zapisz zdjecie"
 
         self.loading_label = tk.Label(self.main_frame, text="", font=("Verdana", 10), bg="#fefefe", fg="#999")
         self.loading_label.pack()
 
-    # budowanie zakładki ulubionych
+    # budowanie zakładki - "Ulubione"
     def fav_tab(self):
         self.fav_canvas = tk.Canvas(self.fav_frame, bg="#fefefe")
         self.fav_scroll = ttk.Scrollbar(self.fav_frame, orient="vertical", command=self.fav_canvas.yview)
@@ -123,7 +122,7 @@ class DogApp:
         self.fav_canvas.pack(side="left", fill="both", expand=True)
         self.fav_scroll.pack(side="right", fill="y")
 
-    # aktualizacja zawartości zakładki ulubionych
+    # aktualizacja zawartosci zakladki ulubionych
     def update_fav_tab(self):
         for widget in self.scrollable_frame.winfo_children():
             widget.destroy()
@@ -141,6 +140,7 @@ class DogApp:
                 img_label.image = photo
                 img_label.pack(pady=5)
 
+                # wyswietla nazwe rasy zapisanego psa
                 breed_label = tk.Label(frame, text=f"Rasa: {fav['breed']}", font=("Verdana", 10), bg="#fefefe", fg="#333")
                 breed_label.pack()
 
@@ -148,16 +148,16 @@ class DogApp:
                 btn_frame.pack(pady=5)
 
                 save_btn = ttk.Button(btn_frame, text="Zapisz", command=lambda url=fav["url"]: self.save_image_by_url(url))
-                save_btn.pack(side="left", padx=5)
+                save_btn.pack(side="left", padx=5) # przycisk "Zapisz" do zapisywania zdjecia
 
                 del_btn = ttk.Button(btn_frame, text="Usuń", command=lambda url=fav["url"]: self.remove_favorite(url))
-                del_btn.pack(side="left", padx=5)
+                del_btn.pack(side="left", padx=5) # przycisk "Usuń"
 
             except Exception as e:
                 error_label = tk.Label(frame, text=f"Błąd wczytania: {e}", bg="#fefefe", fg="red")
                 error_label.pack()
 
-    # wczytywanie dostępnych ras psów z API
+    # wczytywanie dostepnych ras psow z API
     def load_breeds(self):
         try:
             res = requests.get(f"{API_URL}/breeds")
@@ -167,7 +167,7 @@ class DogApp:
         except Exception as e:
             self.label.config(text=f"Błąd ładowania ras: {e}")
 
-    # pobieranie nowego zdjęcia psa
+    # pobieranie zdjecia psa
     def fetch_dog(self):
         global CURRENT_IMAGE, CURRENT_IMAGE_URL
 
@@ -175,12 +175,13 @@ class DogApp:
             self.loading_label.config(text="Ładowanie...")
             self.root.update()
 
+            # mozna wylosowac max 5 razy nowe zdjecie psa z konkretnej rasy
             breed = self.breed_combobox.get()
             attempts = 0
             max_attempts = 5
             new_img_url = CURRENT_IMAGE_URL
 
-            # losowanie nowego zdjęcia (nie takiego samego jak poprzednie)
+            # losowanie nowego zdjecia
             while new_img_url == CURRENT_IMAGE_URL and attempts < max_attempts:
                 if breed == "Losowy":
                     res = requests.get(f"{API_URL}/dog")
@@ -214,31 +215,33 @@ class DogApp:
 
     # dodanie obecnego psa do ulubionych
     def add_to_favorites(self):
+        # blad jesli nie mamy wylosowanego psa a chcemy uzyc przycisku dodawania do ulubionych
         if not CURRENT_IMAGE_URL:
             self.loading_label.config(text="Najpierw wylosuj psa!")
             return
 
+        # blad jesli chcemy ponownie zapisac zdjecie ktore juz znajduje sie w ulubionych
         if CURRENT_IMAGE_URL:
             for fav in FAVORITES:
                 if fav["url"] == CURRENT_IMAGE_URL:
                     self.loading_label.config(text="To zdjęcie już jest w ulubionych.")
                     return
             breed = self.breed_label.cget("text").replace("Rasa: ", "")
-            FAVORITES.append({"url": CURRENT_IMAGE_URL, "breed": breed})
+            FAVORITES.append({"url": CURRENT_IMAGE_URL, "breed": breed}) # dodanie do listy ulubionych zdjecia i rasy
             save_favorites()
             self.update_fav_tab()
             self.loading_label.config(text="Dodano do ulubionych!")
 
-    # zapis zdjęcia aktualnie wyświetlanego psa
+    # zapisywanie zdjecia aktualnie wyswietlanego psa do nas na komputer
     def save_image(self):
         if CURRENT_IMAGE:
             file_path = filedialog.asksaveasfilename(defaultextension=".jpg", filetypes=[("JPEG", "*.jpg")])
             if file_path:
                 CURRENT_IMAGE.save(file_path)
         else:
-            self.loading_label.config(text="Najpierw wylosuj psa!")
+            self.loading_label.config(text="Najpierw wylosuj psa!") # blad jesli nie mamy wylosowanego zdjecia psa
 
-    # zapis zdjęcia ulubionego psa na podstawie url
+    # zapis zdjecia psa na podstawie url (zapis z "Ulubionych" bo tam sa one zapisane w URL)
     def save_image_by_url(self, url):
         try:
             img_data = requests.get(url).content
@@ -249,7 +252,7 @@ class DogApp:
         except Exception as e:
             print(f"Błąd zapisu: {e}")
 
-    # usunięcie psa z ulubionych
+    # usuniecie psa z ulubionych
     def remove_favorite(self, url):
         global FAVORITES
         FAVORITES = [f for f in FAVORITES if f["url"] != url]
